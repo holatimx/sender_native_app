@@ -35,6 +35,14 @@ class MainActivity : FlutterActivity() {
                 when (call.method) {
                     "sendDataFromNative" -> {
                         try {
+                            val ticket =
+                                call.argument<Int>("ticket")
+                                    ?: throw Exception("Ticket inválido")
+
+                            val transactedAt =
+                                call.argument<String>("transactedAt")
+                                    ?: throw Exception("Fecha inválida")
+
                             //NECESSARY CODE TO SEND A MOVEMENT TO SERVICES
                             val intent = Intent()
                             intent.component = ComponentName(
@@ -44,8 +52,8 @@ class MainActivity : FlutterActivity() {
 
                             val gson = Gson()
                             val movement = Movement(
-                                123456,
-                                "2023-09-04T00:00:00-07:00",
+                                ticket,
+                                transactedAt,
                                 "prueba hecho desde app externa",
                                 1,
                                 null,
@@ -86,11 +94,10 @@ class MainActivity : FlutterActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == requestExternalCode) {
-            val receivedData = data.data.toString()
             if (resultCode == RESULT_OK) {
-                methodChannel?.invokeMethod("DATA_RECEIVED", receivedData)
+                methodChannel?.invokeMethod("DATA_RECEIVED", intent.getStringExtra("result"))
             } else if (resultCode == RESULT_CANCELED) {
-                methodChannel?.invokeMethod("DATA_RECEIVED_ERROR", receivedData)
+                methodChannel?.invokeMethod("DATA_RECEIVED_ERROR", intent.getStringExtra("error"))
             }
         }
     }

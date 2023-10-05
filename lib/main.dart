@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 const platform = MethodChannel('com.example/my_channel');
 
@@ -32,6 +33,14 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   String? _result;
 
   @override
@@ -66,19 +75,51 @@ class _MainPageState extends State<MainPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-          if (_result != null) Text(_result!),
-          Center(
-              child: ElevatedButton(
-                  onPressed: _sendData, child: const Text("Enviar ejemplo")))
-        ])));
+                  if (_result != null) Text(_result!),
+                  TextField(
+                    controller: _controller,
+                    keyboardType: TextInputType.number, // Teclado numérico
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly // Acepta solo dígitos
+                    ],
+                    decoration: InputDecoration(
+                      labelText: 'Ingresa un ticket',
+                    ),
+                  ),
+                  Center(
+                      child: ElevatedButton(
+                          onPressed: _sendData,
+                          child: const Text("Enviar ejemplo")))
+                ])));
   }
 
   Future<void> _sendData() async {
     try {
-      final result = await platform.invokeMethod('sendDataFromNative');
+      final ticket = int.tryParse(_controller.text);
+      if(ticket == null) return;
+
+      final result = await platform.invokeMethod('sendDataFromNative', {
+        "ticket": ticket,
+        "transactedAt": DateTime.now().toIso8601TimeZonedString()
+      });
       print(result);
     } catch (error) {
       print(error);
     }
   }
+}
+
+extension DateTimeZoneExtension on DateTime {
+  String myOwnTimeZoneFormatter({final Duration? offSet}) {
+    final timeZone = offSet ?? timeZoneOffset;
+    if (timeZone.inSeconds == 0) {
+      return "Z";
+    }
+    return "${timeZone.isNegative ? "" : "+"}${NumberFormat("##00").format(
+        timeZone.inHours)}:${NumberFormat("##00").format(
+        timeZone.inMinutes - timeZone.inHours * 60)}";
+  }
+
+  String toIso8601TimeZonedString({final Duration? offSet}) =>
+      "${toIso8601String()}${myOwnTimeZoneFormatter(offSet: offSet)}";
 }
