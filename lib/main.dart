@@ -33,7 +33,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  TextEditingController _controller = TextEditingController();
+  final _controller = TextEditingController();
 
   @override
   void dispose() {
@@ -47,18 +47,13 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       platform.setMethodCallHandler((call) async {
-        try {
-          switch (call.method) {
-            case "DATA_RECEIVED":
-              _result = call.arguments.toString();
-              break;
-            case "DATA_RECEIVED_ERROR":
-              _result = "ERROR:\n${call.arguments.toString()}";
-              break;
-          }
-        } catch (error) {
-          if (!mounted) return;
-          print(error.toString());
+        switch (call.method) {
+          case "DATA_RECEIVED":
+            _result = call.arguments.toString();
+            break;
+          case "DATA_RECEIVED_ERROR":
+            _result = "ERROR:\n${call.arguments.toString()}";
+            break;
         }
 
         setState(() {});
@@ -75,37 +70,29 @@ class _MainPageState extends State<MainPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (_result != null) Text(_result!),
-                  TextField(
-                    controller: _controller,
-                    keyboardType: TextInputType.number, // Teclado numérico
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly // Acepta solo dígitos
-                    ],
-                    decoration: InputDecoration(
-                      labelText: 'Ingresa un ticket',
-                    ),
-                  ),
-                  Center(
-                      child: ElevatedButton(
-                          onPressed: _sendData,
-                          child: const Text("Enviar ejemplo")))
-                ])));
+          if (_result != null) Text(_result!),
+          TextField(
+              controller: _controller,
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
+              decoration:
+                  const InputDecoration(labelText: 'Ingresa un ticket')),
+          Center(
+              child: ElevatedButton(
+                  onPressed: _sendData, child: const Text("Enviar ejemplo")))
+        ])));
   }
 
   Future<void> _sendData() async {
-    try {
-      final ticket = int.tryParse(_controller.text);
-      if(ticket == null) return;
+    final ticket = int.tryParse(_controller.text);
+    if (ticket == null) return;
 
-      final result = await platform.invokeMethod('sendDataFromNative', {
-        "ticket": ticket,
-        "transactedAt": DateTime.now().toIso8601TimeZonedString()
-      });
-      print(result);
-    } catch (error) {
-      print(error);
-    }
+    await platform.invokeMethod('sendDataFromNative', {
+      "ticket": ticket,
+      "transactedAt": DateTime.now().toIso8601TimeZonedString()
+    });
   }
 }
 
@@ -115,9 +102,7 @@ extension DateTimeZoneExtension on DateTime {
     if (timeZone.inSeconds == 0) {
       return "Z";
     }
-    return "${timeZone.isNegative ? "" : "+"}${NumberFormat("##00").format(
-        timeZone.inHours)}:${NumberFormat("##00").format(
-        timeZone.inMinutes - timeZone.inHours * 60)}";
+    return "${timeZone.isNegative ? "" : "+"}${NumberFormat("##00").format(timeZone.inHours)}:${NumberFormat("##00").format(timeZone.inMinutes - timeZone.inHours * 60)}";
   }
 
   String toIso8601TimeZonedString({final Duration? offSet}) =>
