@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+const platform = MethodChannel('com.example/my_channel');
+
 void main() {
   runApp(const MyApp());
 }
@@ -30,19 +32,49 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  String? _result;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      platform.setMethodCallHandler((call) async {
+        try {
+          switch (call.method) {
+            case "DATA_RECEIVED":
+              _result = call.arguments.toString();
+              break;
+            case "DATA_RECEIVED_ERROR":
+              _result = "ERROR:\n${call.arguments.toString()}";
+              break;
+          }
+        } catch (error) {
+          if (!mounted) return;
+          print(error.toString());
+        }
+
+        setState(() {});
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-            child: Center(
-                child: ElevatedButton(
-                    onPressed: _sendData,
-                    child: const Text("Enviar ejemplo")))));
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+          if (_result != null) Text(_result!),
+          Center(
+              child: ElevatedButton(
+                  onPressed: _sendData, child: const Text("Enviar ejemplo")))
+        ])));
   }
 
   Future<void> _sendData() async {
     try {
-      const platform = MethodChannel('com.example/my_channel');
       final result = await platform.invokeMethod('sendDataFromNative');
       print(result);
     } catch (error) {

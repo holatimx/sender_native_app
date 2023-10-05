@@ -13,10 +13,11 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
 import kotlin.concurrent.thread
 
+
 class MainActivity : FlutterActivity() {
     private val appChannel = "com.example/my_channel"
     private var methodChannel: MethodChannel? = null
-
+    private val requestExternalCode = 123
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
     }
@@ -34,6 +35,7 @@ class MainActivity : FlutterActivity() {
                 when (call.method) {
                     "sendDataFromNative" -> {
                         try {
+                            //NECESSARY CODE TO SEND A MOVEMENT TO SERVICES
                             val intent = Intent()
                             intent.component = ComponentName(
                                 "com.holati.hola_gas_android_services_app",
@@ -42,7 +44,7 @@ class MainActivity : FlutterActivity() {
 
                             val gson = Gson()
                             val movement = Movement(
-                                1,
+                                123456,
                                 "2023-09-04T00:00:00-07:00",
                                 "prueba hecho desde app externa",
                                 1,
@@ -51,32 +53,27 @@ class MainActivity : FlutterActivity() {
                                 true,
                                 listOf(
                                     MovementProduct(
-                                        100.0,
+                                        22.10,
                                         0.0,
                                         10.0,
                                         0.0,
                                         Product(
-                                            1,
-                                            "Magna",
-                                            "Gasolina verde",
-                                            "Litros",
-                                            "00FF00",
+                                            32011,
+                                            "MAGNA",
+                                            "Gasolina regular menor a 91 octanos",
+                                            "LTR",
+                                            "008000",
                                             true,
                                             null
                                         )
                                     )
                                 )
                             )
-                            intent.putExtra("movement", gson.toJson(movement))
-                            startActivity(intent)
-                            /*
 
-                                                        val intent =
-                                                            Intent("com.holati.hola_gas_android_services_app.CREATE_MOVEMENT")
-                                                        intent.putExtra("ticket", "123456789")
-                                                        sendBroadcast(intent)*/
+                            intent.putExtra("movement", gson.toJson(movement))
+                            startActivityForResult(intent, requestExternalCode)
+
                         } catch (e: Exception) {
-                            // Manejar la excepción aquí, por ejemplo, mostrando un mensaje de error
                             result.error(e.message!!, e.message, e.message)
                         }
                         result.success(true)
@@ -85,4 +82,17 @@ class MainActivity : FlutterActivity() {
             }
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == requestExternalCode) {
+            val receivedData = data.data.toString()
+            if (resultCode == RESULT_OK) {
+                methodChannel?.invokeMethod("DATA_RECEIVED", receivedData)
+            } else if (resultCode == RESULT_CANCELED) {
+                methodChannel?.invokeMethod("DATA_RECEIVED_ERROR", receivedData)
+            }
+        }
+    }
+
 }
