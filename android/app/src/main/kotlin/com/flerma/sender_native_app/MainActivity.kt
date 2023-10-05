@@ -95,9 +95,9 @@ class MainActivity : FlutterActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == requestExternalCode) {
             if (resultCode == RESULT_OK) {
-                methodChannel?.invokeMethod("DATA_RECEIVED", intent.getStringExtra("result"))
+                methodChannel?.invokeMethod("DATA_RECEIVED", data.getStringExtra("result"))
             } else if (resultCode == RESULT_CANCELED) {
-                methodChannel?.invokeMethod("DATA_RECEIVED_ERROR", intent.getStringExtra("error"))
+                methodChannel?.invokeMethod("DATA_RECEIVED_ERROR", data.getStringExtra("error"))
             }
         }
     }
