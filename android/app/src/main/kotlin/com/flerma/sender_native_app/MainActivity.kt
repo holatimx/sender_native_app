@@ -41,6 +41,22 @@ class MainActivity : FlutterActivity() {
                                 call.argument<Int>("ticket")
                                     ?: throw Exception("Ticket inválido")
 
+                            val pumpNumber =
+                                call.argument<Int>("pumpNumber")
+                                    ?: throw Exception("Número de bomba inválido")
+
+                            val dispatcher =
+                                call.argument<String>("dispatcher")
+                                    ?: throw Exception("Despachador inválido")
+
+                            val notificationDetails =
+                                call.argument<String>("notificationDetails")
+                                    ?: throw Exception("Detalle de notificaciones inválido")
+
+                            val paymentMethod = call.argument<String>("paymentMethod")
+
+                            val addProduct = call.argument<Boolean>("addProduct") ?: false
+
                             val transactedAt =
                                 call.argument<String>("transactedAt")
                                     ?: throw Exception("Fecha inválida")
@@ -52,34 +68,58 @@ class MainActivity : FlutterActivity() {
                                 "com.holati.hola_gas_android_services_app.MainActivity"
                             )
 
+                            var products = mutableListOf<MovementProduct>(
+                                MovementProduct(
+                                    22.10,
+                                    0.0,
+                                    10.0,
+                                    0.0,
+                                    null, //Si mandan NULL se calcula en la app, pero si mandan el valor, aun que no coinsida se tomará en cuenta
+                                    Product(
+                                        32011,
+                                        "MAGNA",
+                                        "Gasolina regular menor a 91 octanos",
+                                        "LTR",
+                                        "008000",
+                                        true,
+                                        "010100"
+                                    )
+                                )
+                            )
+
+                            // PUEDES AGREGAR MAS PRODUCTS SI ASÍ LO DESEAN
+                            if (addProduct)
+                                products.add(
+                                    MovementProduct(
+                                        65.0,
+                                        0.0,
+                                        1.0,
+                                        0.0,
+                                        null, //Si mandan NULL se calcula en la app, pero si mandan el valor, aun que no coinsida se tomará en cuenta
+                                        Product(
+                                            54,
+                                            "ANTICONGELANTE",
+                                            "54 ANTICONGELANTE H87",
+                                            "H87",
+                                            "D5D2D1",
+                                            false,
+                                            null
+                                        )
+                                    )
+                                )
+
+
                             ///SE USA Gson() PARA CONVERTIR LOS OBJETOS A JSONS CODIFICADOS A STRING
                             val gson = Gson()
                             val movement = Movement(
                                 ticket,
                                 transactedAt,
-                                "prueba hecho desde app externa",
-                                1,
-                                null,
-                                null,
+                                notificationDetails,
+                                pumpNumber,
+                                dispatcher,
+                                paymentMethod,
                                 true,
-                                listOf(
-                                    MovementProduct(
-                                        22.10,
-                                        0.0,
-                                        10.0,
-                                        0.0,
-                                        null, //Si mandan NULL se calcula en la app, pero si mandan el valor, aun que no coinsida se tomará en cuenta
-                                        Product(
-                                            32011,
-                                            "MAGNA",
-                                            "Gasolina regular menor a 91 octanos",
-                                            "LTR",
-                                            "008000",
-                                            true,
-                                            null
-                                        )
-                                    )
-                                )
+                                products
                             )
 
                             //SE AGREGA COMO CAMPO AL INTENT
