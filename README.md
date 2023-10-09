@@ -7,6 +7,7 @@ Aplicación de ejemplo para utilizar los servicios HolaGAS
 Se debe mandar un string a la actividad principal de nuestra app de servicios
 
 ### REALIZAR INTENT
+
 ```kotlin
 val intent = Intent()
 
@@ -55,3 +56,24 @@ data class Product(
     @SerializedName("nacsCategory") val nacsCategory: String?
 )
 ```
+
+### COMO ESPERAR POR UNA RESPUESTA
+
+Al haber mandado a llamar el startActivityForResult, se debe esperar una respuesta de la sig manera
+
+```kotlin
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == requestExternalCode) {
+        if (resultCode == RESULT_OK) {
+            methodChannel?.invokeMethod("DATA_RECEIVED", data.getStringExtra("result"))
+        } else if (resultCode == RESULT_CANCELED) {
+            methodChannel?.invokeMethod("DATA_RECEIVED_ERROR", data.getStringExtra("error"))
+        }
+    }
+}
+```
+
+Tomando en cuenta el [requestCode], ya sea una respuesta exitosa [RESULT_OK] o alguna
+erronea [RESULT_CANCELED], se regresará un mensaje string, ya sea con json codificado o un mensaje
+en especifico
