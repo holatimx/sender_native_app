@@ -35,6 +35,8 @@ class MainActivity : FlutterActivity() {
                 when (call.method) {
                     "sendDataFromNative" -> {
                         try {
+                            ///SKIP
+                            //OBTENCIÓN DE VALORES MANDADOS DESDE FLUTTER
                             val ticket =
                                 call.argument<Int>("ticket")
                                     ?: throw Exception("Ticket inválido")
@@ -43,13 +45,14 @@ class MainActivity : FlutterActivity() {
                                 call.argument<String>("transactedAt")
                                     ?: throw Exception("Fecha inválida")
 
-                            //NECESSARY CODE TO SEND A MOVEMENT TO SERVICES
+                            //AQUÍ EMPIEZA EL CÓDIGO PARA CONSUMIR EL SERVICIO
                             val intent = Intent()
                             intent.component = ComponentName(
                                 "com.holati.hola_gas_android_services_app",
                                 "com.holati.hola_gas_android_services_app.MainActivity"
                             )
 
+                            ///SE USA Gson() PARA CONVERTIR LOS OBJETOS A JSONS CODIFICADOS A STRING
                             val gson = Gson()
                             val movement = Movement(
                                 ticket,
@@ -65,6 +68,7 @@ class MainActivity : FlutterActivity() {
                                         0.0,
                                         10.0,
                                         0.0,
+                                        null, //Si mandan NULL se calcula en la app, pero si mandan el valor, aun que no coinsida se tomará en cuenta
                                         Product(
                                             32011,
                                             "MAGNA",
@@ -78,7 +82,10 @@ class MainActivity : FlutterActivity() {
                                 )
                             )
 
+                            //SE AGREGA COMO CAMPO AL INTENT
                             intent.putExtra("movement", gson.toJson(movement))
+
+                            //SE MANDA A INICIAR LA ACTIVIDAD DE LA APP DE SERVICIOS
                             startActivityForResult(intent, requestExternalCode)
 
                         } catch (e: Exception) {
@@ -93,6 +100,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         super.onActivityResult(requestCode, resultCode, data)
+        //ESPERANDO RESPUESTA DESDE LA APP DE SERVICIOS
         if (requestCode == requestExternalCode) {
             if (resultCode == RESULT_OK) {
                 methodChannel?.invokeMethod("DATA_RECEIVED", data.getStringExtra("result"))

@@ -18,6 +18,7 @@ data class MovementProduct(
     @SerializedName("discount") val discount: Double,
     @SerializedName("amount") val amount: Double,
     @SerializedName("iva") val iva: Double,
+    @SerializedName("total") val total: Double?,
     @SerializedName("product") val product: Product
 )
 
