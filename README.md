@@ -10,6 +10,7 @@ Se debe mandar un string a la actividad principal de nuestra app de servicios
 
 <!-- tabs:start -->
 #### **KOTLIN**
+@[tabs](Kotlin, Java)
 ```kotlin
 val intent = Intent()
 
