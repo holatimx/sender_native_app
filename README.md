@@ -8,7 +8,6 @@ Se debe mandar un string a la actividad principal de nuestra app de servicios
 
 ### REALIZAR INTENT
 
-<!-- tabs:start -->
 #### **KOTLIN**
 ```kotlin
 val intent = Intent()
@@ -35,12 +34,12 @@ intent.putExtra("movement", movimiento_json);
 
 startActivityForResult(intent, requestExternalCode);
 ```
-<!-- tabs:end -->
 
 ### DATOS QUE DEBE CONTENER EL MOVIMIENTO
 
 Se generaron modelos de datos para ayudar al correcto manejo de datos
 
+#### **KOTLIN**
 ```kotlin
 data class Movement(
     @SerializedName("ticket") val ticket: Int,
@@ -72,11 +71,83 @@ data class Product(
     @SerializedName("nacsCategory") val nacsCategory: String?
 )
 ```
+#### **JAVA**
+```java
+public static class Movement {
+        @SerializedName("ticket")
+        public int ticket;
+
+        @SerializedName("transactedAt")
+        public String transactedAt;
+
+        @SerializedName("notificationDetails")
+        public String notificationDetails;
+
+        @SerializedName("pumpNumber")
+        public int pumpNumber;
+
+        @SerializedName("dispatcher")
+        public String dispatcher;
+
+        @SerializedName("paymentMethod")
+        public String paymentMethod;
+
+        @SerializedName("canRedeemPoints")
+        public boolean canRedeemPoints;
+
+        @SerializedName("movementProducts")
+        public List<MovementProduct> movementProducts;
+}
+
+public static class MovementProduct {
+        @SerializedName("price")
+        public double price;
+
+        @SerializedName("discount")
+        public double discount;
+
+        @SerializedName("amount")
+        public double amount;
+
+        @SerializedName("iva")
+        public double iva;
+
+        @SerializedName("total")
+        public Double total;
+
+        @SerializedName("product")
+        public Product product;
+}
+
+public static class Product {
+        @SerializedName("controlGasCode")
+        public int controlGasCode;
+
+        @SerializedName("name")
+        public String name;
+
+        @SerializedName("details")
+        public String details;
+
+        @SerializedName("nomenclature")
+        public String nomenclature;
+
+        @SerializedName("hexColor")
+        public String hexColor;
+
+        @SerializedName("isGas")
+        public boolean isGas;
+
+        @SerializedName("nacsCategory")
+        public String nacsCategory;
+}
+```
 
 ### COMO ESPERAR POR UNA RESPUESTA
 
 Al haber mandado a llamar el startActivityForResult, se debe esperar una respuesta de la sig manera
 
+#### **KOTLIN**
 ```kotlin
 override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
     super.onActivityResult(requestCode, resultCode, data)
@@ -85,6 +156,20 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
             methodChannel?.invokeMethod("DATA_RECEIVED", data.getStringExtra("result"))
         } else if (resultCode == RESULT_CANCELED) {
             methodChannel?.invokeMethod("DATA_RECEIVED_ERROR", data.getStringExtra("error"))
+        }
+    }
+}
+```
+#### **JAVA**
+```java
+@Override
+protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == requestExternalCode) {
+        if (resultCode == RESULT_OK) {
+            methodChannel.invokeMethod("DATA_RECEIVED", data.getStringExtra("result"));
+        } else if (resultCode == RESULT_CANCELED) {
+            methodChannel.invokeMethod("DATA_RECEIVED_ERROR", data.getStringExtra("error"));
         }
     }
 }
