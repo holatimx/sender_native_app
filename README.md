@@ -73,7 +73,7 @@ data class Product(
 ```
 #### **JAVA**
 ```java
-public static class Movement {
+public class Movement {
         @SerializedName("ticket")
         public int ticket;
 
@@ -99,7 +99,7 @@ public static class Movement {
         public List<MovementProduct> movementProducts;
 }
 
-public static class MovementProduct {
+public class MovementProduct {
         @SerializedName("price")
         public double price;
 
@@ -119,7 +119,7 @@ public static class MovementProduct {
         public Product product;
 }
 
-public static class Product {
+public class Product {
         @SerializedName("controlGasCode")
         public int controlGasCode;
 
