@@ -9,7 +9,7 @@ Se debe mandar un string a la actividad principal de nuestra app de servicios
 ### REALIZAR INTENT
 
 <!-- tabs:start -->
-_#### **KOTLIN**
+#### **KOTLIN**
 ```kotlin
 val intent = Intent()
 
@@ -22,7 +22,7 @@ intent.putExtra("movement", movimiento_json)
 
 startActivityForResult(intent, requestExternalCode)
 ```
-_#### **JAVA**
+#### **JAVA**
 ```java
 Intent intent = new Intent();
 
