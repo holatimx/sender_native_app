@@ -1,14 +1,3 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">
-
-<script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        document.querySelectorAll('pre code').forEach((block) => {
-            hljs.highlightBlock(block);
-        });
-    });
-</script>
-
 # sender_native_app
 
 Aplicación de ejemplo para utilizar los servicios HolaGAS
@@ -19,41 +8,8 @@ Se debe mandar un string a la actividad principal de nuestra app de servicios
 
 ### REALIZAR INTENT
 
-```html
-<figure>
-  <figcaption>Kotlin</figcaption>
-  <pre><code class="language-kotlin">
-val intent = Intent()
-
-intent.component = ComponentName(
-    "com.holati.hola_gas_android_services_app",
-    "com.holati.hola_gas_android_services_app.MainActivity"
-)
-
-intent.putExtra("movement", movimiento_json)
-
-startActivityForResult(intent, requestExternalCode)
-  </code></pre>
-</figure>
-
-<figure>
-  <figcaption>Java</figcaption>
-  <pre><code class="language-java">
-Intent intent = new Intent();
-
-intent.setComponent(new ComponentName(
-    "com.holati.hola_gas_android_services_app",
-    "com.holati.hola_gas_android_services_app.MainActivity"
-));
-
-intent.putExtra("movement", movimiento_json);
-
-startActivityForResult(intent, requestExternalCode);
-  </code></pre>
-</figure>
-```
 <!-- tabs:start -->
-#### **KOTLIN**
+_#### **KOTLIN**
 ```kotlin
 val intent = Intent()
 
@@ -66,7 +22,7 @@ intent.putExtra("movement", movimiento_json)
 
 startActivityForResult(intent, requestExternalCode)
 ```
-#### **JAVA**
+_#### **JAVA**
 ```java
 Intent intent = new Intent();
 
