@@ -8,9 +8,41 @@ Se debe mandar un string a la actividad principal de nuestra app de servicios
 
 ### REALIZAR INTENT
 
+```html
+<figure>
+  <figcaption>Kotlin</figcaption>
+  <pre><code class="language-kotlin">
+val intent = Intent()
+
+intent.component = ComponentName(
+    "com.holati.hola_gas_android_services_app",
+    "com.holati.hola_gas_android_services_app.MainActivity"
+)
+
+intent.putExtra("movement", movimiento_json)
+
+startActivityForResult(intent, requestExternalCode)
+  </code></pre>
+</figure>
+
+<figure>
+  <figcaption>Java</figcaption>
+  <pre><code class="language-java">
+Intent intent = new Intent();
+
+intent.setComponent(new ComponentName(
+    "com.holati.hola_gas_android_services_app",
+    "com.holati.hola_gas_android_services_app.MainActivity"
+));
+
+intent.putExtra("movement", movimiento_json);
+
+startActivityForResult(intent, requestExternalCode);
+  </code></pre>
+</figure>
+```
 <!-- tabs:start -->
 #### **KOTLIN**
-@[tabs](Kotlin, Java)
 ```kotlin
 val intent = Intent()
 
