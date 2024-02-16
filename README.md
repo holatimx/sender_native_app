@@ -8,6 +8,8 @@ Se debe mandar un string a la actividad principal de nuestra app de servicios
 
 ### REALIZAR INTENT
 
+<!-- tabs:start -->
+#### **KOTLIN**
 ```kotlin
 val intent = Intent()
 
@@ -20,6 +22,20 @@ intent.putExtra("movement", movimiento_json)
 
 startActivityForResult(intent, requestExternalCode)
 ```
+#### **JAVA**
+```java
+Intent intent = new Intent();
+
+intent.setComponent(new ComponentName(
+    "com.holati.hola_gas_android_services_app",
+    "com.holati.hola_gas_android_services_app.MainActivity"
+));
+
+intent.putExtra("movement", movimiento_json);
+
+startActivityForResult(intent, requestExternalCode);
+```
+<!-- tabs:end -->
 
 ### DATOS QUE DEBE CONTENER EL MOVIMIENTO
 
