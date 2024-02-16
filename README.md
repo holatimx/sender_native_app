@@ -348,3 +348,13 @@ en especifico
   "error": "ESTO ES UN STRING"
 }
 ```
+
+### EN CASO DE HABER APLICADO UNA REDENCIÓN
+```json
+"redemptionsUsed": {
+    "pointsUsedForRedemptions": 2484,
+    "moneyUsedForRedemptions": 24.84,
+    "remainingAmount": 0
+}
+```
+
