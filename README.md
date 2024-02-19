@@ -42,103 +42,103 @@ Se generaron modelos de datos para ayudar al correcto manejo de datos
 #### **KOTLIN**
 ```kotlin
 data class Movement(
-    @SerializedName("ticket") val ticket: Int,
-    @SerializedName("transactedAt") val transactedAt: String?,
-    @SerializedName("notificationDetails") val notificationDetails: String?,
-    @SerializedName("pumpNumber") val pumpNumber: Int,
-    @SerializedName("dispatcher") val dispatcher: String?,
-    @SerializedName("paymentMethod") val paymentMethod: String?,
-    @SerializedName("canRedeemPoints") val canRedeemPoints: Boolean,
-    @SerializedName("movementProducts") val movementProducts: List<MovementProduct>
+    @SerializedName("ticket") val ticket: Int,  //dbo.despachos.nrotrn                                 
+    @SerializedName("transactedAt") val transactedAt: String?, //fecha-hora actual formato YYYY-MM-DDTHH:MM:SST-TIMEZONE  p.e. 2024-02-19T10:47:23.5342682-07:00
+    @SerializedName("notificationDetails") val notificationDetails: String?, //string datos informativos de la fecha hora local de la terminal p.e. "con fecha {despachoTask.fechaStr} {despachoTask.HoraStr}"
+    @SerializedName("pumpNumber") val pumpNumber: Int, //dbo.despachos.nrobom
+    @SerializedName("dispatcher") val dispatcher: String?, //dbo.responsables.den   inner join con dbo.despachos.codres
+    @SerializedName("paymentMethod") val paymentMethod: String?,  //string denominacion de la forma de pago p.e. "Efectivo"
+    @SerializedName("canRedeemPoints") val canRedeemPoints: Boolean, //false para solo movimiento de acumulación y true para movimiento con aplicación de redeción de puntos
+    @SerializedName("movementProducts") val movementProducts: List<MovementProduct> //lista de MovementProduct
 )
 
 data class MovementProduct(
-    @SerializedName("price") val price: Double,
-    @SerializedName("discount") val discount: Double,
-    @SerializedName("amount") val amount: Double,
-    @SerializedName("iva") val iva: Double,
-    @SerializedName("total") val total: Double?,
-    @SerializedName("product") val product: Product
+    @SerializedName("price") val price: Double,  //dbo.despachos.pre
+    @SerializedName("discount") val discount: Double, //enviar 0 siempre se actualizara por los servicios de FidelityONE®
+    @SerializedName("amount") val amount: Double, //dbo.despachos.can
+    @SerializedName("iva") val iva: Double, //calculo de IVA del producto
+    @SerializedName("total") val total: Double?, // dbo.despachos.mto
+    @SerializedName("product") val product: Product //objeto Product
 )
 
 data class Product(
-    @SerializedName("controlGasCode") val controlGasCode: Int,
-    @SerializedName("name") val name: String,
-    @SerializedName("details") val details: String,
-    @SerializedName("nomenclature") val nomenclature: String,
-    @SerializedName("hexColor") val hexColor: String?,
-    @SerializedName("isGas") val isGas: Boolean,
-    @SerializedName("nacsCategory") val nacsCategory: String?
+    @SerializedName("controlGasCode") val controlGasCode: Int, //si es combustible dbo.productos.cveprv, si es producto dbo.productos.codext inner join dbo.despachos.codprd
+    @SerializedName("name") val name: String, // dbo.productos.den inner join dbo.despachos.codprd
+    @SerializedName("details") val details: String, //si es combustible dbo.productos.codSAT p.e. "Gasolina regular menor a 91 octanos", si es producto "{item.CodigoProducto} {item.Producto} {item.UnidadMedida}"
+    @SerializedName("nomenclature") val nomenclature: String, //dbo.productos.uni inner join dbo.despachos.codprd
+    @SerializedName("hexColor") val hexColor: String?, // dbo.productos.rgbcol en hexadecimal de 3 bytes p.e. 008000 
+    @SerializedName("isGas") val isGas: Boolean, //true si es combustible y false si es producto.
+    @SerializedName("nacsCategory") val nacsCategory: String? //dbo.productos.NACScat inner joing dbo.despachos.codprd
 )
 ```
 #### **JAVA**
 ```java
 public class Movement {
-        @SerializedName("ticket")
+        @SerializedName("ticket") //dbo.despachos.nrotrn   
         public int ticket;
 
-        @SerializedName("transactedAt")
+        @SerializedName("transactedAt") //fecha-hora actual formato YYYY-MM-DDTHH:MM:SST-TIMEZONE  p.e. 2024-02-19T10:47:23.5342682-07:00
         public String transactedAt;
 
-        @SerializedName("notificationDetails")
+        @SerializedName("notificationDetails") //string datos informativos de la fecha hora local de la terminal p.e. "con fecha {despachoTask.fechaStr} {despachoTask.HoraStr}"
         public String notificationDetails;
 
-        @SerializedName("pumpNumber")
+        @SerializedName("pumpNumber") //dbo.despachos.nrobom
         public int pumpNumber;
 
-        @SerializedName("dispatcher")
+        @SerializedName("dispatcher") //dbo.responsables.den   inner join con dbo.despachos.codres
         public String dispatcher;
 
-        @SerializedName("paymentMethod")
+        @SerializedName("paymentMethod") //string denominacion de la forma de pago p.e. "Efectivo"
         public String paymentMethod;
 
-        @SerializedName("canRedeemPoints")
+        @SerializedName("canRedeemPoints") //false para solo movimiento de acumulación y true para movimiento con aplicación de redeción de puntos
         public boolean canRedeemPoints;
 
-        @SerializedName("movementProducts")
+        @SerializedName("movementProducts") //lista de MovementProduct
         public List<MovementProduct> movementProducts;
 }
 
 public class MovementProduct {
-        @SerializedName("price")
+        @SerializedName("price") //dbo.despachos.pre
         public double price;
-
-        @SerializedName("discount")
+ 
+        @SerializedName("discount") //enviar 0 siempre se actualizara por los servicios de FidelityONE®
         public double discount;
 
-        @SerializedName("amount")
+        @SerializedName("amount") //dbo.despachos.can
         public double amount;
 
-        @SerializedName("iva")
+        @SerializedName("iva") //calculo de IVA del producto
         public double iva;
 
-        @SerializedName("total")
+        @SerializedName("total") // dbo.despachos.mto
         public Double total;
 
-        @SerializedName("product")
+        @SerializedName("product") //objeto Product
         public Product product;
 }
 
 public class Product {
-        @SerializedName("controlGasCode")
+        @SerializedName("controlGasCode") //si es combustible dbo.productos.cveprv, si es producto dbo.productos.codext inner join dbo.despachos.codprd
         public int controlGasCode;
 
-        @SerializedName("name")
+        @SerializedName("name") // dbo.productos.den inner join dbo.despachos.codprd
         public String name;
 
-        @SerializedName("details")
+        @SerializedName("details") //si es combustible dbo.productos.codSAT p.e. "Gasolina regular menor a 91 octanos", si es producto "{item.CodigoProducto} {item.Producto} {item.UnidadMedida}"
         public String details;
 
-        @SerializedName("nomenclature")
+        @SerializedName("nomenclature") //dbo.productos.uni inner join dbo.despachos.codprd
         public String nomenclature;
 
-        @SerializedName("hexColor")
+        @SerializedName("hexColor") // dbo.productos.rgbcol en hexadecimal de 3 bytes p.e. 008000 
         public String hexColor;
 
-        @SerializedName("isGas")
+        @SerializedName("isGas") //true si es combustible y false si es producto.
         public boolean isGas;
 
-        @SerializedName("nacsCategory")
+        @SerializedName("nacsCategory") //dbo.productos.NACScat inner joing dbo.despachos.codprd
         public String nacsCategory;
 }
 ```
