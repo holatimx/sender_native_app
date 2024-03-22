@@ -10,7 +10,8 @@ data class Movement(
     @SerializedName("dispatcher") val dispatcher: String?,
     @SerializedName("paymentMethod") val paymentMethod: String?,
     @SerializedName("canRedeemPoints") val canRedeemPoints: Boolean,
-    @SerializedName("movementProducts") val movementProducts: List<MovementProduct>
+    @SerializedName("movementProducts") val movementProducts: List<MovementProduct>,
+    @SerializedName("requiredAmountOfMxnMoneyToRedeem") val requiredAmountOfMxnMoneyToRedeem: Double?
 )
 
 data class MovementProduct(
