@@ -50,7 +50,8 @@ data class Movement(
     @SerializedName("paymentMethod") val paymentMethod: String?,  //string denominacion de la forma de pago p.e. "Efectivo"
     @SerializedName("canRedeemPoints") val canRedeemPoints: Boolean, //false para solo movimiento de acumulación y true para movimiento con aplicación de redeción de puntos
     @SerializedName("movementProducts") val movementProducts: List<MovementProduct>, //lista de MovementProduct
-    @SerializedName("requiredAmountOfMxnMoneyToRedeem") val requiredAmountOfMxnMoneyToRedeem: Double? //dinero requerido a redimir
+    @SerializedName("amountOfMxnMoneyToRedeem") val requiredAmountOfMxnMoneyToRedeem: Double?, //dinero que se quiere redimir (MXN)
+    @SerializedName("amountToRedeemIsRequired") val amountToRedeemIsRequired: Boolean //el dinero a redimir es requerido
 )
 
 data class MovementProduct(
@@ -107,9 +108,13 @@ public class Movement {
     //lista de MovementProduct
     public List<MovementProduct> movementProducts;
 
-    @SerializedName("requiredAmountOfMxnMoneyToRedeem")
-    //dinero requerido a redimir
-    public double requiredAmountOfMxnMoneyToRedeem;
+    @SerializedName("amountOfMxnMoneyToRedeem")
+    //dinero que se quiere redimir (MXN)
+    public double amountOfMxnMoneyToRedeem;
+
+    @SerializedName("amountToRedeemIsRequired")
+    //el dinero a redimir es requerido
+    public boolean amountToRedeemIsRequired;
 }
 
 public class MovementProduct {
