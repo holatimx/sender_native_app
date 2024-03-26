@@ -15,11 +15,15 @@ import kotlin.concurrent.thread
 
 
 class MainActivity : FlutterActivity() {
-    private val appChannel = "com.example/my_channel"
-    private var methodChannel: MethodChannel? = null
+    private val appChannel =
+        "com.example/my_channel"
+    private var methodChannel: MethodChannel? =
+        null
     private val requestExternalCode = 123
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-        GeneratedPluginRegistrant.registerWith(flutterEngine)
+        GeneratedPluginRegistrant.registerWith(
+            flutterEngine
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -38,54 +42,92 @@ class MainActivity : FlutterActivity() {
                             ///SKIP
                             //OBTENCIÓN DE VALORES MANDADOS DESDE FLUTTER
                             val ticket =
-                                call.argument<Int>("ticket")
-                                    ?: throw Exception("Ticket inválido")
+                                call.argument<Int>(
+                                    "ticket"
+                                )
+                                    ?: throw Exception(
+                                        "Ticket inválido"
+                                    )
 
                             val pumpNumber =
-                                call.argument<Int>("pumpNumber")
-                                    ?: throw Exception("Número de bomba inválido")
+                                call.argument<Int>(
+                                    "pumpNumber"
+                                )
+                                    ?: throw Exception(
+                                        "Número de bomba inválido"
+                                    )
 
                             val dispatcher =
-                                call.argument<String>("dispatcher")
-                                    ?: throw Exception("Despachador inválido")
+                                call.argument<String>(
+                                    "dispatcher"
+                                )
+                                    ?: throw Exception(
+                                        "Despachador inválido"
+                                    )
 
                             val notificationDetails =
-                                call.argument<String>("notificationDetails")
-                                    ?: throw Exception("Detalle de notificaciones inválido")
+                                call.argument<String>(
+                                    "notificationDetails"
+                                )
+                                    ?: throw Exception(
+                                        "Detalle de notificaciones inválido"
+                                    )
 
-                            val paymentMethod = call.argument<String>("paymentMethod")
+                            val paymentMethod =
+                                call.argument<String>(
+                                    "paymentMethod"
+                                )
 
-                            val addProduct = call.argument<Boolean>("addProduct") ?: false
+                            val addProduct =
+                                call.argument<Boolean>(
+                                    "addProduct"
+                                ) ?: false
 
                             val transactedAt =
-                                call.argument<String>("transactedAt")
-                                    ?: throw Exception("Fecha inválida")
+                                call.argument<String>(
+                                    "transactedAt"
+                                )
+                                    ?: throw Exception(
+                                        "Fecha inválida"
+                                    )
+
+                            val requiredAmountOfMxnMoneyToRedeem =
+                                call.argument<Double>(
+                                    "requiredAmountOfMxnMoneyToRedeem"
+                                )
+
+                            val amountToRedeemIsRequired =
+                                call.argument<Boolean>(
+                                    "amountToRedeemIsRequired"
+                                ) == true
 
                             //AQUÍ EMPIEZA EL CÓDIGO PARA CONSUMIR EL SERVICIO
                             val intent = Intent()
-                            intent.component = ComponentName(
-                                "com.holati.hola_gas_android_services_app",
-                                "com.holati.hola_gas_android_services_app.MainActivity"
-                            )
+                            intent.component =
+                                ComponentName(
+                                    "com.holati.hola_gas_android_services_app",
+                                    "com.holati.hola_gas_android_services_app.MainActivity"
+                                )
 
-                            var products = mutableListOf<MovementProduct>(
-                                MovementProduct(
-                                    22.10,
-                                    0.0,
-                                    10.0,
-                                    0.0,
-                                    null, //Si mandan NULL se calcula en la app, pero si mandan el valor, aun que no coinsida se tomará en cuenta
-                                    Product(
-                                        32011,
-                                        "MAGNA",
-                                        "Gasolina regular menor a 91 octanos",
-                                        "LTR",
-                                        "008000",
-                                        true,
-                                        "010100"
+                            var products =
+                                mutableListOf<MovementProduct>(
+                                    MovementProduct(
+                                        22.10,
+                                        0.0,
+                                        10.0,
+                                        0.0,
+                                        null, //Si mandan NULL se calcula en la app, pero si mandan el valor, aun que no coinsida se tomará en cuenta
+                                        Product(
+                                            32011,
+                                            "MAGNA",
+                                            "Gasolina regular menor a 91 octanos",
+                                            "LTR",
+                                            "008000",
+                                            true,
+                                            "010100"
+                                        )
                                     )
                                 )
-                            )
 
                             // PUEDES AGREGAR MAS PRODUCTS SI ASÍ LO DESEAN
                             if (addProduct)
@@ -111,25 +153,40 @@ class MainActivity : FlutterActivity() {
 
                             ///SE USA Gson() PARA CONVERTIR LOS OBJETOS A JSONS CODIFICADOS A STRING
                             val gson = Gson()
-                            val movement = Movement(
-                                ticket,
-                                transactedAt,
-                                notificationDetails,
-                                pumpNumber,
-                                dispatcher,
-                                paymentMethod,
-                                true,
-                                products
-                            )
+                            val movement =
+                                Movement(
+                                    ticket,
+                                    transactedAt,
+                                    notificationDetails,
+                                    pumpNumber,
+                                    dispatcher,
+                                    paymentMethod,
+                                    true,
+                                    products,
+                                    requiredAmountOfMxnMoneyToRedeem,
+                                    amountToRedeemIsRequired
+                                )
 
                             //SE AGREGA COMO CAMPO AL INTENT
-                            intent.putExtra("movement", gson.toJson(movement))
+                            intent.putExtra(
+                                "movement",
+                                gson.toJson(
+                                    movement
+                                )
+                            )
 
                             //SE MANDA A INICIAR LA ACTIVIDAD DE LA APP DE SERVICIOS
-                            startActivityForResult(intent, requestExternalCode)
+                            startActivityForResult(
+                                intent,
+                                requestExternalCode
+                            )
 
                         } catch (e: Exception) {
-                            result.error(e.message!!, e.message, e.message)
+                            result.error(
+                                e.message!!,
+                                e.message,
+                                e.message
+                            )
                         }
                         result.success(true)
                     }
@@ -138,14 +195,28 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent
+    ) {
+        super.onActivityResult(
+            requestCode,
+            resultCode,
+            data
+        )
         //ESPERANDO RESPUESTA DESDE LA APP DE SERVICIOS
         if (requestCode == requestExternalCode) {
             if (resultCode == RESULT_OK) {
-                methodChannel?.invokeMethod("DATA_RECEIVED", data.getStringExtra("result"))
+                methodChannel?.invokeMethod(
+                    "DATA_RECEIVED",
+                    data.getStringExtra("result")
+                )
             } else if (resultCode == RESULT_CANCELED) {
-                methodChannel?.invokeMethod("DATA_RECEIVED_ERROR", data.getStringExtra("error"))
+                methodChannel?.invokeMethod(
+                    "DATA_RECEIVED_ERROR",
+                    data.getStringExtra("error")
+                )
             }
         }
     }

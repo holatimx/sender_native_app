@@ -12,7 +12,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -56,8 +55,14 @@ class _MainPageState extends State<MainPage> {
   final _paymentMethodKey = GlobalKey();
 
   //------
+  final _requiredAmountOfMxnMoneyToRedeemController = TextEditingController();
+  final _requiredAmountOfMxnMoneyToRedeemKey = GlobalKey();
+
+  //------
 
   bool _addProduct = false;
+
+  bool _amountToRedeemIsRequired = false;
 
   @override
   void dispose() {
@@ -67,6 +72,7 @@ class _MainPageState extends State<MainPage> {
     _dispatcherController.dispose();
     _paymentMethodController.dispose();
     _contentFormKey.currentState?.dispose();
+    _requiredAmountOfMxnMoneyToRedeemController.dispose();
     super.dispose();
   }
 
@@ -105,6 +111,7 @@ class _MainPageState extends State<MainPage> {
       required final TextEditingController controller,
       final InputDecoration? decoration,
       final TextInputType? keyboardType = TextInputType.name,
+      final bool canBeBlank = false,
       final String? Function(String)? validations}) {
     return TextFormField(
         key: inputKey,
@@ -113,7 +120,7 @@ class _MainPageState extends State<MainPage> {
         keyboardType: keyboardType,
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "Este campo no debe estar vacio";
+            return (canBeBlank) ? null : "Este campo no debe estar vacio";
           }
 
           if (validations != null) {
@@ -142,6 +149,7 @@ class _MainPageState extends State<MainPage> {
                       labelText: "Ticket", hintText: "Introdusca ticket"),
                   validations: (value) {
                     if (int.tryParse(value) == null) return "Debe ser numerico";
+                    return null;
                   }),
               _customInput(
                   inputKey: _pumpNumberKey,
@@ -152,6 +160,7 @@ class _MainPageState extends State<MainPage> {
                       hintText: "Introdusca número de bomba"),
                   validations: (value) {
                     if (int.tryParse(value) == null) return "Debe ser numerico";
+                    return null;
                   }),
               _customInput(
                   inputKey: _dispatcherKey,
@@ -170,7 +179,21 @@ class _MainPageState extends State<MainPage> {
                   controller: _paymentMethodController,
                   decoration: const InputDecoration(
                       labelText: "Método de pago",
-                      hintText: "Introdusca método de pago"))
+                      hintText: "Introdusca método de pago")),
+              _customInput(
+                  inputKey: _requiredAmountOfMxnMoneyToRedeemKey,
+                  controller: _requiredAmountOfMxnMoneyToRedeemController,
+                  canBeBlank: true,
+                  validations: (value) {
+                    if (double.tryParse(value) == null) {
+                      return "Debe ser numerico";
+                    }
+
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                      labelText: "Cantidad de \$MXN a redimir",
+                      hintText: "Introdusca la cantidad a redimir"))
             ]));
   }
 
@@ -179,7 +202,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
         appBar: _appBar(),
         body: SafeArea(
-            child: Padding(
+            child: SingleChildScrollView(
                 padding: const EdgeInsets.all(5),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -192,6 +215,12 @@ class _MainPageState extends State<MainPage> {
                           title: const Text("Agregar producto seco"),
                           onChanged: (value) => setState(() {
                                 _addProduct = value;
+                              })),
+                      SwitchListTile(
+                          value: _amountToRedeemIsRequired,
+                          title: const Text("El pago es de 1 exhibición"),
+                          onChanged: (value) => setState(() {
+                                _amountToRedeemIsRequired = value;
                               })),
                       const SizedBox(height: 5),
                       Center(
@@ -211,7 +240,13 @@ class _MainPageState extends State<MainPage> {
       "notificationDetails": _notificationDetailsController.text.trim(),
       "paymentMethod": _paymentMethodController.text.trim(),
       "addProduct": _addProduct,
-      "transactedAt": DateTime.now().toIso8601TimeZonedString()
+      "transactedAt": DateTime.now().toIso8601TimeZonedString(),
+      "requiredAmountOfMxnMoneyToRedeem":
+          (_requiredAmountOfMxnMoneyToRedeemController.text.isEmpty)
+              ? null
+              : double.parse(
+                  _requiredAmountOfMxnMoneyToRedeemController.text.trim()),
+      "amountToRedeemIsRequired": _amountToRedeemIsRequired
     });
   }
 
@@ -221,6 +256,7 @@ class _MainPageState extends State<MainPage> {
     _pumpNumberController.clear();
     _dispatcherController.clear();
     _paymentMethodController.clear();
+    _requiredAmountOfMxnMoneyToRedeemController.clear();
   }
 }
 
