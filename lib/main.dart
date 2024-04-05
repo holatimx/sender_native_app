@@ -62,6 +62,7 @@ class _MainPageState extends State<MainPage> {
 
   bool _addProduct = false;
 
+  bool _canRedeemPoints = true;
   bool _amountToRedeemIsRequired = false;
 
   @override
@@ -217,8 +218,15 @@ class _MainPageState extends State<MainPage> {
                                 _addProduct = value;
                               })),
                       SwitchListTile(
+                          value: _canRedeemPoints,
+                          title: const Text("Puede redimir puntos"),
+                          onChanged: (value) => setState(() {
+                                _canRedeemPoints = value;
+                              })),
+                      SwitchListTile(
                           value: _amountToRedeemIsRequired,
-                          title: const Text("El pago es de 1 exhibición"),
+                          title: const Text(
+                              "La cantidad a redimir es obligatoria"),
                           onChanged: (value) => setState(() {
                                 _amountToRedeemIsRequired = value;
                               })),
@@ -241,6 +249,7 @@ class _MainPageState extends State<MainPage> {
       "paymentMethod": _paymentMethodController.text.trim(),
       "addProduct": _addProduct,
       "transactedAt": DateTime.now().toIso8601TimeZonedString(),
+      "canRedeemPoints": _canRedeemPoints,
       "requiredAmountOfMxnMoneyToRedeem":
           (_requiredAmountOfMxnMoneyToRedeemController.text.isEmpty)
               ? null

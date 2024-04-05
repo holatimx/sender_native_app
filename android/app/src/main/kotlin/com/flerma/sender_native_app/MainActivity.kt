@@ -91,6 +91,11 @@ class MainActivity : FlutterActivity() {
                                         "Fecha inválida"
                                     )
 
+                            val canRedeemPoints =
+                                call.argument<Boolean>(
+                                    "canRedeemPoints"
+                                ) == true
+
                             val requiredAmountOfMxnMoneyToRedeem =
                                 call.argument<Double>(
                                     "requiredAmountOfMxnMoneyToRedeem"
@@ -161,7 +166,7 @@ class MainActivity : FlutterActivity() {
                                     pumpNumber,
                                     dispatcher,
                                     paymentMethod,
-                                    true,
+                                    canRedeemPoints,
                                     products,
                                     requiredAmountOfMxnMoneyToRedeem,
                                     amountToRedeemIsRequired
